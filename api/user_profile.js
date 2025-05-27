@@ -27,17 +27,26 @@ let testUser = {
   ]
 };
 
-export default function handler(req, res) {
+module.exports = (req, res) => {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
   const { method } = req;
 
   switch (method) {
     case 'GET':
       res.status(200).json(testUser);
       break;
-      
+
     case 'PUT':
       const updatedData = req.body;
-      
+
       if (updatedData.Name) testUser.Name = updatedData.Name;
       if (updatedData.Email) testUser.Email = updatedData.Email;
       if (updatedData.PhoneNumber) testUser.PhoneNumber = updatedData.PhoneNumber;
@@ -45,9 +54,9 @@ export default function handler(req, res) {
 
       res.status(200).json(testUser);
       break;
-      
+
     default:
       res.setHeader('Allow', ['GET', 'PUT']);
       res.status(405).json({ error: `Method ${method} Not Allowed` });
   }
-}
+};

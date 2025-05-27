@@ -26,21 +26,31 @@ let testWishlist = [
   }
 ];
 
-export default function handler(req, res) {
+module.exports = (req, res) => {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   const { method, query } = req;
 
   switch (method) {
     case 'GET':
       res.status(200).json(testWishlist);
       break;
-      
+
     case 'POST':
       const newItem = req.body;
-      
+
       if (!newItem.name || !newItem.price) {
         return res.status(400).json({ error: 'Name and price are required' });
       }
-      
+
       const wishlistItem = {
         id: `PROD-${Date.now()}`,
         name: newItem.name,
@@ -50,38 +60,38 @@ export default function handler(req, res) {
         inStock: newItem.inStock !== undefined ? newItem.inStock : true,
         ...newItem
       };
-      
+
       testWishlist.push(wishlistItem);
-      res.status(201).json({ 
-        message: "Item added to wishlist", 
+      res.status(201).json({
+        message: "Item added to wishlist",
         item: wishlistItem,
-        wishlist: testWishlist 
+        wishlist: testWishlist
       });
       break;
-      
+
     case 'DELETE':
       const { id } = query;
-      
+
       if (!id) {
         return res.status(400).json({ error: 'Item ID is required' });
       }
-      
+
       const index = testWishlist.findIndex(item => item.id === id);
-      
+
       if (index === -1) {
         return res.status(404).json({ error: 'Item not found in wishlist' });
       }
-      
+
       const removedItem = testWishlist.splice(index, 1)[0];
-      res.status(200).json({ 
-        message: "Item removed from wishlist", 
+      res.status(200).json({
+        message: "Item removed from wishlist",
         removedItem,
-        wishlist: testWishlist 
+        wishlist: testWishlist
       });
       break;
-      
+
     default:
       res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
       res.status(405).json({ error: `Method ${method} Not Allowed` });
   }
-}
+};

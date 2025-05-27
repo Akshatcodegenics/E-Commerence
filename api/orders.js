@@ -32,14 +32,24 @@ const testOrders = [
   }
 ];
 
-export default function handler(req, res) {
+module.exports = (req, res) => {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   const { method, query } = req;
 
   switch (method) {
     case 'GET':
       // Optional filtering by status
       if (query.status) {
-        const filteredOrders = testOrders.filter(order => 
+        const filteredOrders = testOrders.filter(order =>
           order.status.toLowerCase() === query.status.toLowerCase()
         );
         res.status(200).json(filteredOrders);
@@ -47,9 +57,9 @@ export default function handler(req, res) {
         res.status(200).json(testOrders);
       }
       break;
-      
+
     default:
       res.setHeader('Allow', ['GET']);
       res.status(405).json({ error: `Method ${method} Not Allowed` });
   }
-}
+};
