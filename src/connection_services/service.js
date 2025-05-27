@@ -1,14 +1,18 @@
+// API Base URL configuration
+const API_BASE_URL = import.meta.env.VITE_API_URL ||
+  (import.meta.env.MODE === 'production' ? '/api' : 'http://localhost:5000');
+
 const apiService = {
   login: async (credentials) => {
 
     if (!credentials.Email || !credentials.Password) {
       alert("Please fill in all fields!");
       return;
-    }  
+    }
 
     console.log("Sending credentials:", credentials);
 
-    const response = await fetch("http://localhost:5000/login", {
+    const response = await fetch(`${API_BASE_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -39,16 +43,16 @@ const apiService = {
 
     console.log("Sending credentials:", credentials);
 
-    const response = await fetch("http://localhost:5000/signup", {
+    const response = await fetch(`${API_BASE_URL}/signup`, {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
          },
         credentials: "include",
         body: JSON.stringify(credentials),
     });
     console.log(response);
-    
+
     if(!response.ok){
         const errorData = await response.json();
         console.log("ERROR in service.js");
@@ -66,7 +70,7 @@ const apiService = {
   logout: async () => {
     try {
       // const response = await fetch('/logout', {
-      const response = await fetch('http://localhost:5000/logout', {
+      const response = await fetch(`${API_BASE_URL}/logout`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -74,18 +78,18 @@ const apiService = {
         },
       });
       console.log(response);
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Logout failed');
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error('Logout error:', error);
       throw error;
     }
-  }, 
+  },
 
 };
 

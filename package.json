@@ -8,6 +8,7 @@
     "client": "vite",
     "dev": "npx concurrently \"npm run start\" \"npm run client\"",
     "build": "vite build",
+    "vercel-build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
